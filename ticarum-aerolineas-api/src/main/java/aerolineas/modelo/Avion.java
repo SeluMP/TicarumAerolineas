@@ -1,4 +1,4 @@
-package com.ticarum.aerolineas.ticarumaerolineasapi.model;
+package aerolineas.modelo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
