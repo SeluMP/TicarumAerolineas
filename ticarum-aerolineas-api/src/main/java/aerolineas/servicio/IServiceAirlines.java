@@ -7,11 +7,14 @@ import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.Vuelo;
 import aerolineas.modelo.Avion;
 
-public interface IServicioAeropuertos {
+public interface IServiceAirlines {
 	Aerolinea crear(Aerolinea aerolinea);
-		
-	Optional<Aerolinea> getAerolinea(String nombre);
 	
+	Optional<Aerolinea> findAirlineById(Long id);
+	
+	Optional<Aerolinea> findAirlineByName(String name);
+	
+	//@Query("SELECT v FROM ")
 	Optional<List<Vuelo>> getVuelosPendientes();
 	
 	Optional<List<Vuelo>> getSalidas();
@@ -29,7 +32,5 @@ public interface IServicioAeropuertos {
 	Vuelo haSalidoVuelo(Long id);
 	
 	boolean despegarVuelo(Long id);
-	
-	
-	
+
 }

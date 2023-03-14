@@ -3,27 +3,41 @@ package aerolineas.servicio;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.Avion;
 import aerolineas.modelo.Vuelo;
+import aerolineas.repositorio.RepositorioAerolinea;
+import aerolineas.repositorio.RepositorioAvion;
+import aerolineas.repositorio.RepositorioVuelo;
+import lombok.AllArgsConstructor;
 
 @Service
-public class ServicioAeropuertos implements IServicioAeropuertos {
+@AllArgsConstructor
+public class ServiceAirlines implements IServiceAirlines {
 	
-	//RepositorioAerolinea repositorioAerolinea
+	@Autowired
+	private RepositorioAerolinea repositorioAerolinea;
+	@Autowired
+	private RepositorioAvion repositorioAvion;
+	@Autowired
+	private RepositorioVuelo repositorioVuelo;
 
 	@Override
 	public Aerolinea crear(Aerolinea aerolinea) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<Aerolinea> getAerolinea(String nombre) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	public Optional<Aerolinea> findAirlineByName(String name) {
+		return Optional.ofNullable(repositorioAerolinea.findByName(name));
+	}
+
+	@Override
+	public Optional<Aerolinea> findAirlineById(Long id) {
+		return repositorioAerolinea.findById(id);
 	}
 
 	@Override
@@ -79,5 +93,6 @@ public class ServicioAeropuertos implements IServicioAeropuertos {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }
