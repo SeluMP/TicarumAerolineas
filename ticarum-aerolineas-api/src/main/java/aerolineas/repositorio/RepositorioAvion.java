@@ -1,13 +1,13 @@
 package aerolineas.repositorio;
 
-import java.util.List;
+import java.util.Set;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import aerolineas.modelo.Avion;
 
 @Repository
-public interface RepositorioAvion extends JpaRepository<Avion, Long> {
-	List<Avion> findAll();
+public interface RepositorioAvion extends CrudRepository<Avion, Long> {
+	Set<Avion> findAll();
 }

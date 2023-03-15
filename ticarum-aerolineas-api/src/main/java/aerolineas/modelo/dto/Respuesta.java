@@ -1,5 +1,7 @@
 package aerolineas.modelo.dto;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AvionDTO {
-	private Long aerolineaID;
-	private Long avionID;
-	private String modelo;
-	private int capacidad;
+public class Respuesta {
+	public boolean haSalido;
+	public Date horaSalida;
 }

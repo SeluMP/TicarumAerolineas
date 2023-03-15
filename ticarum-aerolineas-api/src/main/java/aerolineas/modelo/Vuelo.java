@@ -2,15 +2,16 @@ package aerolineas.modelo;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="Vuelos")
 public class Vuelo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +31,10 @@ public class Vuelo {
 	private Date salida;
 	@Column(name = "descripcion")
 	private String descripcion;
-	@Column(name = "fk_avion_id")
-	private Long avionId;
-	@Column(name = "fk_aerolinea_id")
-	private Long aerolineaID;
+	@ManyToOne
+    @JoinColumn(name="avion_id", nullable=false)
+	private Avion avion;
+	@ManyToOne
+    @JoinColumn(name="aerolinea_id", nullable=false)
+	private Aerolinea aerolinea;
 }
