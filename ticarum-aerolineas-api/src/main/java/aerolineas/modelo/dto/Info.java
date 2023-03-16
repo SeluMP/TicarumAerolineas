@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class Info {
 	String nombre;
 	Long id;
-	int nAvionesFlota;
+	int numAvionesFlota;
 }

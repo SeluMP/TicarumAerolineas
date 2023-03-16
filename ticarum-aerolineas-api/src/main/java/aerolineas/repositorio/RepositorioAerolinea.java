@@ -15,4 +15,5 @@ public interface RepositorioAerolinea extends CrudRepository<Aerolinea, Long> {
 			  value = "SELECT * FROM AEROLINEA a WHERE a.nombre = ?1", 
 			  nativeQuery = true)
 	Aerolinea findByName(String name);
+	
 }

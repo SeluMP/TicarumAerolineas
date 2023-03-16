@@ -45,11 +45,26 @@ public class ServicioVuelos implements IServiceFlights {
 	public Optional<Vuelo> getVuelo(Long id) {
 		return repositorioVuelo.findById(id);
 	}
+	
+	@Override
+	public Vuelo createVueloPendiente(VueloDTO vueloDTO) {
+		Vuelo vuelo = new Vuelo();
+		vuelo.setDescripcion(vueloDTO.getDescripcion());
+		Date date = new Date();
+		vuelo.setPendiente(date);
+		vuelo.setSalida(null);
+		Avion avion = repositorioAvion.findById(vueloDTO.getAvionID()).orElseThrow(() -> new AvionNotFoundException(vueloDTO.getAvionID()));
+		Aerolinea aerolinea = repositorioAerolinea.findById(vueloDTO.getAerolineaID()).orElseThrow(() -> new AerolineaNotFoundException(vueloDTO.getAerolineaID()));
+		vuelo.setAvion(avion);
+		vuelo.setAerolinea(aerolinea);
+		
+		return repositorioVuelo.save(vuelo);
+	}
 
 	@Override
 	public Vuelo modifyVuelo(Long id, VueloDTO vueloDTO) {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
-		Avion avion = repositorioAvion.findById(vueloDTO.getAvionId()).orElseThrow(() -> new AvionNotFoundException(id));
+		Avion avion = repositorioAvion.findById(vueloDTO.getAvionID()).orElseThrow(() -> new AvionNotFoundException(id));
 		Aerolinea aerolinea = repositorioAerolinea.findById(vueloDTO.getAerolineaID()).orElseThrow(() -> new AerolineaNotFoundException(id));
 		vuelo.setAerolinea(aerolinea);
 		vuelo.setAvion(avion);

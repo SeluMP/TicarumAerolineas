@@ -10,12 +10,16 @@ import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.dto.AerolineaDTO;
 import aerolineas.modelo.dto.Info;
 import aerolineas.repositorio.RepositorioAerolinea;
+import aerolineas.repositorio.RepositorioAvion;
 
 @Service
 public class ServicioAerolineas implements IServiceAirlines {
 
 	@Autowired
 	private RepositorioAerolinea repositorioAerolinea;
+	
+	@Autowired
+	private RepositorioAvion repositorioAvion;
 
 	@Override
 	public Aerolinea crear(AerolineaDTO aerolineaDTO) {
@@ -43,7 +47,7 @@ public class ServicioAerolineas implements IServiceAirlines {
 		Info info = new Info();
 		info.setId(aerolinea.getId());
 		info.setNombre(aerolinea.getNombre());
-		info.setNAvionesFlota(aerolinea.getNumAviones());
+		info.setNumAvionesFlota((int) repositorioAvion.findAvionesPorAerolinea(aerolinea.getId()));
 
 		return info;
 	}
