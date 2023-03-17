@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 public class Aerolinea {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "aerolinea_id")
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String nombre;

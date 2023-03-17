@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 public class Vuelo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "vuelo_id")
 	private Long id;
 	@Column(name = "pendiente")
 	@CreationTimestamp

@@ -58,6 +58,11 @@ public class ServicioVuelos implements IServiceFlights {
 		vuelo.setAvion(avion);
 		vuelo.setAerolinea(aerolinea);
 		
+		aerolinea.addVuelo(vuelo);
+		avion.addVuelo(vuelo);
+		repositorioAerolinea.save(aerolinea);
+		repositorioAvion.save(avion);
+		
 		return repositorioVuelo.save(vuelo);
 	}
 
