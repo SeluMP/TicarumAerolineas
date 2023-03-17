@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import aerolineas.modelo.Vuelo;
-import aerolineas.modelo.dto.Respuesta;
+import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.VueloDTO;
 
 public interface IServiceFlights {
@@ -18,9 +18,9 @@ public interface IServiceFlights {
 
 	Vuelo modifyVuelo(Long id, VueloDTO vueloDTO);
 
-	void deleteVuelo(Long id);
+	void deleteVuelo(Long id, String nombreAerolinea);
 
-	Respuesta haSalidoVuelo(Long id);
+	InfoSalida haSalidoVuelo(Long id);
 
 	Vuelo despegarVuelo(Long id);
 

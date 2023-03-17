@@ -1,13 +1,17 @@
 package aerolineas.modelo;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,14 +30,28 @@ public class Avion {
 	private String modelo;
 	@Column(nullable = false)
 	private int capacidad;
-	@OneToMany(mappedBy="avion",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="avion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Vuelo> vuelos;
-	@Column(name = "fk_aerolinea_id")
-	private Long aerolinea;
+	@ManyToOne
+	@JoinColumn(name="fk_aerolinea_id", nullable=false)
+	private Aerolinea aerolinea;
 	
 	public Avion(String modelo, int capacidad) {
 		this.modelo = modelo;
 		this.capacidad = capacidad;
+	}
+	
+	public void addVuelo(Vuelo vuelo) {
+		if(null == vuelos) {
+			vuelos = new HashSet<>();
+		}
+		vuelos.add(vuelo);
+		vuelo.setAvion(this);
+	}
+	
+	public void removeVuelo(Vuelo vuelo) {
+		vuelos.remove(vuelo);
+		vuelo.setAvion(null);
 	}
 	
 }

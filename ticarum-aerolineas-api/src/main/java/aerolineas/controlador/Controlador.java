@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,17 +14,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import aerolineas.exception.AerolineaNotFoundException;
-import aerolineas.exception.AvionNotFoundException;
 import aerolineas.exception.VueloNotFoundException;
-import aerolineas.modelo.Aerolinea;
-import aerolineas.modelo.Avion;
 import aerolineas.modelo.Vuelo;
 import aerolineas.modelo.dto.Info;
+import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.Respuesta;
 import aerolineas.modelo.dto.VueloDTO;
 import aerolineas.servicio.ServicioAerolineas;
-import aerolineas.servicio.ServicioAviones;
 import aerolineas.servicio.ServicioVuelos;
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -36,8 +33,8 @@ public class Controlador {
 	@Autowired
 	private ServicioVuelos servicioVuelos;
 
-	@Autowired
-	private ServicioAviones servicioAviones;
+	/*@Autowired
+	private ServicioAviones servicioAviones;*/
 	
 
 	@GetMapping(value = "/{aerolinea}/services/info", produces = "application/json")
@@ -72,19 +69,21 @@ public class Controlador {
 		return new ResponseEntity<>(vuelo, HttpStatus.OK);
 	}
 	
-	/*@PutMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
+	@PutMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Vuelo> editVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo, @RequestBody VueloDTO vueloDTO) {
 
-		Vuelo vuelo = servicioVuelos.getVuelo(idVuelo).orElseThrow(() -> new VueloNotFoundException(idVuelo));
-		Avion avion = servicioAviones.(vueloDTO.getAvionID()).orElseThrow(() -> new AvionNotFoundException(id));
-		Aerolinea aerolinea = repositorioAerolinea.findById(vueloDTO.getAerolineaID()).orElseThrow(() -> new AerolineaNotFoundException(id));
-		vuelo.setDescripcion(aerolinea.getDescripcion());
-		vuelo.setAvion(avion.getAvionID());
-		vuelo.setAerolinea(aerolinea.getAerolineaID());
-		servicioVuelos.
+		Vuelo vuelo = servicioVuelos.modifyVuelo(idVuelo, vueloDTO);
 
 		return new ResponseEntity<>(vuelo, HttpStatus.OK);
-	}*/
+	}
+	
+	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Respuesta> deleteVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo, @RequestBody VueloDTO vueloDTO) {
+
+		servicioVuelos.deleteVuelo(idVuelo, aerolinea);
+
+		return new ResponseEntity<>(Respuesta.noErrorResponse(), HttpStatus.NO_CONTENT);
+	}
 	
 	@GetMapping(value = "/{aerolinea}/services/salida", produces = "application/json")
 	public ResponseEntity<Set<Vuelo>> getVuelosSalida(@PathVariable String aerolinea) {
@@ -95,9 +94,17 @@ public class Controlador {
 	}
 	
 	@GetMapping(value = "/{aerolinea}/services/salida/{idVuelo}", produces = "application/json")
-	public ResponseEntity<Respuesta> getHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
+	public ResponseEntity<InfoSalida> getHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
-		Respuesta respuesta = servicioVuelos.haSalidoVuelo(idVuelo);
+		InfoSalida respuesta = servicioVuelos.haSalidoVuelo(idVuelo);
+
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
+	}
+	
+	@PutMapping(value = "/{aerolinea}/services/salida/{idVuelo}/despegue", produces = "application/json")
+	public ResponseEntity<Vuelo> modifyHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
+
+		Vuelo respuesta = servicioVuelos.despegarVuelo(idVuelo);
 
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}

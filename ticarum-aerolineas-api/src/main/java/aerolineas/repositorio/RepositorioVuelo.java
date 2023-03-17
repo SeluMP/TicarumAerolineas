@@ -15,7 +15,7 @@ public interface RepositorioVuelo extends CrudRepository<Vuelo, Long> {
 			  nativeQuery = true)
 	Set<Vuelo> findAll();
 	@Query(
-			  value = "SELECT * FROM VUELO v WHERE v.PENDIENTE is not null", 
+			  value = "SELECT * FROM VUELO v WHERE v.PENDIENTE is not null and v.SALIDA is null", 
 			  nativeQuery = true)
 	Set<Vuelo> findVuelosPendientes();
 	

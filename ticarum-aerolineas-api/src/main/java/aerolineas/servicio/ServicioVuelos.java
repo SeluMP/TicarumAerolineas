@@ -13,7 +13,7 @@ import aerolineas.exception.VueloNotFoundException;
 import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.Avion;
 import aerolineas.modelo.Vuelo;
-import aerolineas.modelo.dto.Respuesta;
+import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.VueloDTO;
 import aerolineas.repositorio.RepositorioAerolinea;
 import aerolineas.repositorio.RepositorioAvion;
@@ -70,19 +70,29 @@ public class ServicioVuelos implements IServiceFlights {
 		vuelo.setAvion(avion);
 		vuelo.setDescripcion(vueloDTO.getDescripcion());
 		
+		aerolinea.addVuelo(vuelo);
+		avion.addVuelo(vuelo);
+		
+		//TODO
+		repositorioAerolinea.save(aerolinea);
+		repositorioAvion.save(avion);
+		
 		return repositorioVuelo.save(vuelo);
 	}
 
 	@Override
-	public void deleteVuelo(Long id) {
-		repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
-        repositorioVuelo.deleteById(id);
+	public void deleteVuelo(Long id, String nombreAerolinea) {
+		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
+        Aerolinea aerolinea = repositorioAerolinea.findByName(nombreAerolinea);
+        aerolinea.removeVuelo(vuelo);
+        
+        repositorioAerolinea.save(aerolinea);
 	}
 
 	@Override
-	public Respuesta haSalidoVuelo(Long id) {
+	public InfoSalida haSalidoVuelo(Long id) {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
-		Respuesta respuesta = new Respuesta();
+		InfoSalida respuesta = new InfoSalida();
 		
 		if(vuelo.getSalida().equals(null)) {
 			respuesta.setHaSalido(true);
@@ -98,7 +108,6 @@ public class ServicioVuelos implements IServiceFlights {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
 		Date date = new Date();
 		vuelo.setSalida(date);
-		vuelo.setPendiente(null);
 		return repositorioVuelo.save(vuelo);
 	}
 
