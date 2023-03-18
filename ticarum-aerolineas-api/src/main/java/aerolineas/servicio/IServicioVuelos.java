@@ -1,28 +1,27 @@
 package aerolineas.servicio;
 
-import java.util.Optional;
 import java.util.Set;
 
-import aerolineas.modelo.Vuelo;
 import aerolineas.modelo.dao.VueloDAO;
 import aerolineas.modelo.dto.InfoSalida;
+import aerolineas.modelo.dto.VueloDTO;
 
 public interface IServicioVuelos {
-	Set<Vuelo> getVuelosPendientes();
+	Set<VueloDTO> getVuelosPendientes();
 
-	Set<Vuelo> getSalidas();
+	Set<VueloDTO> getSalidas();
 
-	public Vuelo createVueloPendiente(VueloDAO vueloDTO);
+	public VueloDTO createVueloPendiente(VueloDAO vueloDAO);
 
-	Optional<Vuelo> getVuelo(Long id);
+	VueloDTO getVuelo(Long id);
 
-	Vuelo modifyVuelo(Long id, VueloDAO vueloDTO);
+	VueloDTO modifyVuelo(Long id, VueloDAO vueloDAO);
 
 	void deleteVuelo(Long id, String nombreAerolinea);
 
 	InfoSalida haSalidoVuelo(Long id);
 
-	Vuelo despegarVuelo(Long id);
+	VueloDTO despegarVuelo(Long id);
 
-	Set<Vuelo> findAll();
+	Set<VueloDTO> findAll();
 }

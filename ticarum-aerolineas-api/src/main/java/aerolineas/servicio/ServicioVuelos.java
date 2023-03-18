@@ -1,7 +1,7 @@
 package aerolineas.servicio;
 
 import java.util.Date;
-import java.util.Optional;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import aerolineas.modelo.Avion;
 import aerolineas.modelo.Vuelo;
 import aerolineas.modelo.dao.VueloDAO;
 import aerolineas.modelo.dto.InfoSalida;
+import aerolineas.modelo.dto.VueloDTO;
 import aerolineas.repositorio.RepositorioAerolinea;
 import aerolineas.repositorio.RepositorioAvion;
 import aerolineas.repositorio.RepositorioVuelo;
@@ -32,22 +33,28 @@ public class ServicioVuelos implements IServicioVuelos {
 	private RepositorioAvion repositorioAvion;
 
 	@Override
-	public Set<Vuelo> getVuelosPendientes() {
-		return repositorioVuelo.findVuelosPendientes();
+	public Set<VueloDTO> getVuelosPendientes() {
+		Set<VueloDTO> vuelos = new HashSet<>();
+		repositorioVuelo.findVuelosPendientes().stream().forEach(v -> vuelos.add(v.createDTOfromVuelo()));
+		return vuelos;
 	}
 
 	@Override
-	public Set<Vuelo> getSalidas() {
-		return repositorioVuelo.findVuelosSalidas();
+	public Set<VueloDTO> getSalidas() {
+		Set<VueloDTO> vuelos = new HashSet<>();
+		repositorioVuelo.findVuelosSalidas().stream().forEach(v -> vuelos.add(v.createDTOfromVuelo()));
+		return vuelos;
 	}
 
 	@Override
-	public Optional<Vuelo> getVuelo(Long id) {
-		return repositorioVuelo.findById(id);
+	public VueloDTO getVuelo(Long id) {
+		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
+
+		return vuelo.createDTOfromVuelo();
 	}
 
 	@Override
-	public Vuelo createVueloPendiente(VueloDAO vueloDAO) {
+	public VueloDTO createVueloPendiente(VueloDAO vueloDAO) {
 		Vuelo vuelo = new Vuelo();
 		vuelo.setDescripcion(vueloDAO.getDescripcion());
 		Date date = new Date();
@@ -64,12 +71,13 @@ public class ServicioVuelos implements IServicioVuelos {
 		avion.addVuelo(vuelo);
 		repositorioAerolinea.save(aerolinea);
 		repositorioAvion.save(avion);
+		repositorioVuelo.save(vuelo);
 
-		return repositorioVuelo.save(vuelo);
+		return vuelo.createDTOfromVuelo();
 	}
 
 	@Override
-	public Vuelo modifyVuelo(Long id, VueloDAO vueloDAO) {
+	public VueloDTO modifyVuelo(Long id, VueloDAO vueloDAO) {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
 		Avion avion = repositorioAvion.findById(vueloDAO.getAvionID())
 				.orElseThrow(() -> new AvionNotFoundException(id));
@@ -85,7 +93,9 @@ public class ServicioVuelos implements IServicioVuelos {
 		repositorioAerolinea.save(aerolinea);
 		repositorioAvion.save(avion);
 
-		return repositorioVuelo.save(vuelo);
+		repositorioVuelo.save(vuelo);
+
+		return vuelo.createDTOfromVuelo();
 	}
 
 	@Override
@@ -113,16 +123,22 @@ public class ServicioVuelos implements IServicioVuelos {
 	}
 
 	@Override
-	public Vuelo despegarVuelo(Long id) {
+	public VueloDTO despegarVuelo(Long id) {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
-		Date date = new Date();
-		vuelo.setSalida(date);
-		return repositorioVuelo.save(vuelo);
+		if (vuelo.getPendiente() != null) {
+			Date date = new Date();
+			vuelo.setSalida(date);
+			repositorioVuelo.save(vuelo);
+		}
+
+		return vuelo.createDTOfromVuelo();
 	}
 
 	@Override
-	public Set<Vuelo> findAll() {
-		return repositorioVuelo.findAll();
+	public Set<VueloDTO> findAll() {
+		Set<VueloDTO> vuelos = new HashSet<>();
+		repositorioVuelo.findAll().stream().forEach(v -> vuelos.add(v.createDTOfromVuelo()));
+		return vuelos;
 	}
 
 }

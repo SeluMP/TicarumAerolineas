@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import aerolineas.exception.AerolineaNotFoundException;
+import aerolineas.exception.AvionNotFoundException;
 import aerolineas.exception.VueloNotFoundException;
-import aerolineas.modelo.Vuelo;
 import aerolineas.modelo.dao.AvionDAO;
 import aerolineas.modelo.dao.VueloDAO;
 import aerolineas.modelo.dto.AerolineaDTO;
 import aerolineas.modelo.dto.AvionDTO;
 import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.Respuesta;
+import aerolineas.modelo.dto.VueloDTO;
 import aerolineas.servicio.ServicioAerolineas;
 import aerolineas.servicio.ServicioAviones;
 import aerolineas.servicio.ServicioVuelos;
@@ -41,58 +42,96 @@ public class Controlador {
 	private ServicioAviones servicioAviones;
 
 	@GetMapping(value = "/{aerolinea}/services/info", produces = "application/json")
-	public ResponseEntity<AerolineaDTO> getInfoAerolinea(@PathVariable String aerolinea) {
+	public ResponseEntity<Object> getInfoAerolinea(@PathVariable String aerolinea) {
 
 		AerolineaDTO aerolineaDTO = new AerolineaDTO();
 		try {
 			aerolineaDTO = servicioAerolineas.getInfoAerolinea(aerolinea);
 
 		} catch (AerolineaNotFoundException e) {
-			return new ResponseEntity<>(aerolineaDTO, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Aerolinea: " + aerolinea + " no encontrada."),
+					HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity<>(aerolineaDTO, HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/{aerolinea}/services/avion", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<AvionDTO> createAvion(@PathVariable String aerolinea, @RequestBody AvionDAO avionDAO) {
+	public ResponseEntity<Object> createAvion(@PathVariable String aerolinea, @RequestBody AvionDAO avionDAO) {
 
-		AvionDTO avionDTO = servicioAviones.create(avionDAO);
+		AvionDTO avionDTO = new AvionDTO();
+
+		try {
+			avionDTO = servicioAviones.create(avionDAO);
+
+		} catch (AerolineaNotFoundException e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Aerolinea: " + aerolinea + " no encontrada."),
+					HttpStatus.NOT_FOUND);
+		}
 
 		return new ResponseEntity<>(avionDTO, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/{aerolinea}/services/vuelo", produces = "application/json")
-	public ResponseEntity<Set<Vuelo>> getVuelosPendientes(@PathVariable String aerolinea) {
+	public ResponseEntity<Object> getVuelosPendientes(@PathVariable String aerolinea) {
 
-		Set<Vuelo> vuelos = servicioVuelos.getVuelosPendientes();
+		Set<VueloDTO> vuelos = servicioVuelos.getVuelosPendientes();
 
 		return new ResponseEntity<>(vuelos, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/{aerolinea}/services/vuelo", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Vuelo> addVueloPendientes(@PathVariable String aerolinea, @RequestBody VueloDAO vueloDAO) {
+	public ResponseEntity<Object> addVueloPendientes(@PathVariable String aerolinea, @RequestBody VueloDAO vueloDAO) {
 
-		Vuelo vuelo = servicioVuelos.createVueloPendiente(vueloDAO);
+		VueloDTO vueloDTO = new VueloDTO();
 
-		return new ResponseEntity<>(vuelo, HttpStatus.NO_CONTENT);
+		try {
+			vueloDTO = servicioVuelos.createVueloPendiente(vueloDAO);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Entidad Avion o Aerolinea no encontrada/s."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<>(vueloDTO, HttpStatus.NO_CONTENT);
 	}
 
 	@GetMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
-	public ResponseEntity<Vuelo> getVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
+	public ResponseEntity<Object> getVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
-		Vuelo vuelo = servicioVuelos.getVuelo(idVuelo).orElseThrow(() -> new VueloNotFoundException(idVuelo));
+		VueloDTO vueloDTO = new VueloDTO();
 
-		return new ResponseEntity<>(vuelo, HttpStatus.OK);
+		try {
+			vueloDTO = servicioVuelos.getVuelo(idVuelo);
+
+		} catch (VueloNotFoundException e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Vuelo con id: " + idVuelo + " no encontrada."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<>(vueloDTO, HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Vuelo> editVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo,
+	public ResponseEntity<Object> editVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo,
 			@RequestBody VueloDAO vueloDAO) {
 
-		Vuelo vuelo = servicioVuelos.modifyVuelo(idVuelo, vueloDAO);
+		VueloDTO vueloDTO = new VueloDTO();
 
-		return new ResponseEntity<>(vuelo, HttpStatus.OK);
+		try {
+			vueloDTO = servicioVuelos.modifyVuelo(idVuelo, vueloDAO);
+
+		} catch (AvionNotFoundException e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Entidad Avion o Aerolinea no encontrada/s."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<>(vueloDTO, HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
@@ -100,31 +139,58 @@ public class Controlador {
 
 		servicioVuelos.deleteVuelo(idVuelo, aerolinea);
 
-		return new ResponseEntity<>(Respuesta.noErrorResponse(), HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(Respuesta.errorResonse(Respuesta.NO_CONTENT, ""), HttpStatus.NO_CONTENT);
 	}
 
 	@GetMapping(value = "/{aerolinea}/services/salida", produces = "application/json")
-	public ResponseEntity<Set<Vuelo>> getVuelosSalida(@PathVariable String aerolinea) {
+	public ResponseEntity<Object> getVuelosSalida(@PathVariable String aerolinea) {
 
-		Set<Vuelo> vuelos = servicioVuelos.getSalidas();
+		Set<VueloDTO> vuelos = servicioVuelos.getSalidas();
 
 		return new ResponseEntity<>(vuelos, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/{aerolinea}/services/salida/{idVuelo}", produces = "application/json")
-	public ResponseEntity<InfoSalida> getHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
+	public ResponseEntity<Object> getHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
-		InfoSalida respuesta = servicioVuelos.haSalidoVuelo(idVuelo);
+		InfoSalida respuesta = new InfoSalida();
+
+		try {
+			respuesta = servicioVuelos.haSalidoVuelo(idVuelo);
+
+		} catch (VueloNotFoundException e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Vuelo con id: " + idVuelo + " no encontrado."),
+					HttpStatus.NOT_FOUND);
+		}
 
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/{aerolinea}/services/salida/{idVuelo}/despegue", produces = "application/json")
-	public ResponseEntity<Vuelo> modifyHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
+	public ResponseEntity<Object> modifyHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
-		Vuelo respuesta = servicioVuelos.despegarVuelo(idVuelo);
+		VueloDTO vueloDTO = new VueloDTO();
 
-		return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		try {
+			vueloDTO = servicioVuelos.despegarVuelo(idVuelo);
+
+		} catch (VueloNotFoundException e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Vuelo con id: " + idVuelo + " no encontrado."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		if (vueloDTO.getFechaSalida() == null) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.BAD_REQUEST,
+							"El Vuelo con id: " + idVuelo
+									+ " debe estar en la lista de pendientes para autorizar su salida."),
+					HttpStatus.BAD_REQUEST);
+
+		}
+
+		return new ResponseEntity<>(vueloDTO, HttpStatus.OK);
 	}
 
 }

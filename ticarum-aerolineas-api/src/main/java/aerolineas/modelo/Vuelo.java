@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import aerolineas.modelo.dto.VueloDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,4 +44,16 @@ public class Vuelo {
     @JoinColumn(name="fk_aerolinea_id", nullable=false)
 	@JsonIgnore
 	private Aerolinea aerolinea;
+	
+	public VueloDTO createDTOfromVuelo() {
+		VueloDTO vueloDTO = new VueloDTO();
+		vueloDTO.setId(this.getId());
+		vueloDTO.setDescripcion(this.getDescripcion());
+		vueloDTO.setFechaPendienteDeSalida(this.getPendiente());
+		vueloDTO.setFechaSalida(this.getSalida());
+		vueloDTO.setAvionId(this.getAvion().getId());
+		vueloDTO.setAerolineaId(this.getAerolinea().getId());
+
+		return vueloDTO;
+	}
 }

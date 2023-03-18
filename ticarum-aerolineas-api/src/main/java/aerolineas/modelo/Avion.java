@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import aerolineas.modelo.dto.AvionDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,30 +35,40 @@ public class Avion {
 	private String modelo;
 	@Column(nullable = false)
 	private int capacidad;
-	@OneToMany(mappedBy="avion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "avion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Set<Vuelo> vuelos;
 	@ManyToOne
-	@JoinColumn(name="fk_aerolinea_id", nullable=false)
+	@JoinColumn(name = "fk_aerolinea_id", nullable = false)
 	@JsonIgnore
 	private Aerolinea aerolinea;
-	
+
 	public Avion(String modelo, int capacidad) {
 		this.modelo = modelo;
 		this.capacidad = capacidad;
 	}
-	
+
 	public void addVuelo(Vuelo vuelo) {
-		if(null == vuelos) {
+		if (null == vuelos) {
 			vuelos = new HashSet<>();
 		}
 		vuelos.add(vuelo);
 		vuelo.setAvion(this);
 	}
-	
+
 	public void removeVuelo(Vuelo vuelo) {
 		vuelos.remove(vuelo);
 		vuelo.setAvion(null);
 	}
-	
+
+	public AvionDTO createDTOfromAvion() {
+		AvionDTO avionDTO = new AvionDTO();
+		avionDTO.setId(this.getId());
+		avionDTO.setModelo(this.getModelo());
+		avionDTO.setCapacidad(this.getCapacidad());
+		avionDTO.setAerolineaId(this.getAerolinea().getId());
+
+		return avionDTO;
+	}
+
 }

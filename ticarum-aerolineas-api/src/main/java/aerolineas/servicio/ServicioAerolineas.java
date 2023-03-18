@@ -16,7 +16,7 @@ public class ServicioAerolineas implements IServicioAerolineas {
 
 	@Autowired
 	private RepositorioAerolinea repositorioAerolinea;
-	
+
 	@Override
 	public Aerolinea crear(AerolineaDAO aerolineaDTO) {
 		Aerolinea aerolinea = new Aerolinea();
@@ -40,9 +40,7 @@ public class ServicioAerolineas implements IServicioAerolineas {
 		if (aerolinea == null)
 			throw new AerolineaNotFoundException("Aerolinea" + nombre + " no encontrada - información no disponible");
 
-		AerolineaDTO aerolineaDTO = new AerolineaDTO();
-
-		return aerolineaDTO.createDTOfromAerolinea(aerolinea);
+		return aerolinea.createDTOfromAerolinea();
 	}
 
 }

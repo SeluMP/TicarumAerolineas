@@ -1,5 +1,6 @@
 package aerolineas.servicio;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,15 @@ public class ServicioAviones implements IServicioAviones {
 		repositorioAerolinea.save(aerolinea);
 		repositorioAvion.save(avion);
 
-		AvionDTO avionDTO = new AvionDTO();
-		return avionDTO.createDTOfromAvion(avion);
+		return avion.createDTOfromAvion();
 	}
 
 	@Override
-	public Set<Avion> findAll() {
-		return repositorioAvion.findAll();
+	public Set<AvionDTO> findAll() {
+
+		Set<AvionDTO> aviones = new HashSet<AvionDTO>();
+		repositorioAvion.findAll().stream().forEach(a -> aviones.add(a.createDTOfromAvion()));
+		return aviones;
 
 	}
 

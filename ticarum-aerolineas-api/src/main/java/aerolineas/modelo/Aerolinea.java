@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import aerolineas.modelo.dto.AerolineaDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,6 +73,15 @@ public class Aerolinea {
 
 	public int getNumAviones() {
 		return this.aviones.size();
+	}
+	
+	public AerolineaDTO createDTOfromAerolinea() {
+		AerolineaDTO aerolineaDTO = new AerolineaDTO();
+		aerolineaDTO.setId(this.getId());
+		aerolineaDTO.setNombre(this.getNombre());
+		aerolineaDTO.setNumeroAviones(this.getNumAviones());
+		
+		return aerolineaDTO;
 	}
 
 }
