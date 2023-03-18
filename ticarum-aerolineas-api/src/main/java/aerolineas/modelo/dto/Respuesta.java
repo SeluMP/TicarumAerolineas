@@ -7,8 +7,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Respuesta {
-	public static final int NO_ERROR = 0;
-    public static final int NOT_FOUND = 101;
+	public static final int OK = 200;
+	public static final int NO_CONTENT = 204;
+    public static final int NOT_FOUND = 404;
+    public static final int BAD_REQUEST = 400;
  
     public static final String NO_MESSAGE = "";
  
@@ -22,7 +24,7 @@ public class Respuesta {
     }
  
     public static Respuesta noErrorResponse() {
-        return new Respuesta(new Error(NO_ERROR, NO_MESSAGE));
+        return new Respuesta(new Error(OK, NO_MESSAGE));
     }
  
     public static Respuesta errorResonse(int errorCode, String errorMessage) {

@@ -7,22 +7,18 @@ import org.springframework.stereotype.Service;
 
 import aerolineas.exception.AerolineaNotFoundException;
 import aerolineas.modelo.Aerolinea;
+import aerolineas.modelo.dao.AerolineaDAO;
 import aerolineas.modelo.dto.AerolineaDTO;
-import aerolineas.modelo.dto.InfoAerolinea;
 import aerolineas.repositorio.RepositorioAerolinea;
-import aerolineas.repositorio.RepositorioAvion;
 
 @Service
-public class ServicioAerolineas implements IServiceAirlines {
+public class ServicioAerolineas implements IServicioAerolineas {
 
 	@Autowired
 	private RepositorioAerolinea repositorioAerolinea;
 	
-	@Autowired
-	private RepositorioAvion repositorioAvion;
-
 	@Override
-	public Aerolinea crear(AerolineaDTO aerolineaDTO) {
+	public Aerolinea crear(AerolineaDAO aerolineaDTO) {
 		Aerolinea aerolinea = new Aerolinea();
 		aerolinea.setNombre(aerolineaDTO.getNombre());
 		return repositorioAerolinea.save(aerolinea);
@@ -39,17 +35,14 @@ public class ServicioAerolineas implements IServiceAirlines {
 	}
 
 	@Override
-	public InfoAerolinea getInfoAerolinea(String nombre) {
+	public AerolineaDTO getInfoAerolinea(String nombre) {
 		Aerolinea aerolinea = repositorioAerolinea.findByName(nombre);
 		if (aerolinea == null)
-			throw new AerolineaNotFoundException("Aerolinea no encontrada - información no disponible");
+			throw new AerolineaNotFoundException("Aerolinea" + nombre + " no encontrada - información no disponible");
 
-		InfoAerolinea info = new InfoAerolinea();
-		info.setId(aerolinea.getId());
-		info.setNombre(aerolinea.getNombre());
-		info.setNumAvionesFlota((int) repositorioAvion.findAvionesPorAerolinea(aerolinea.getId()));
+		AerolineaDTO aerolineaDTO = new AerolineaDTO();
 
-		return info;
+		return aerolineaDTO.createDTOfromAerolinea(aerolinea);
 	}
 
 }

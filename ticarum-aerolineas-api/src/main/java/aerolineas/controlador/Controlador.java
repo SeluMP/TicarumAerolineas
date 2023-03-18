@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import aerolineas.exception.AerolineaNotFoundException;
 import aerolineas.exception.VueloNotFoundException;
 import aerolineas.modelo.Vuelo;
-import aerolineas.modelo.dto.InfoAerolinea;
+import aerolineas.modelo.dao.AvionDAO;
+import aerolineas.modelo.dao.VueloDAO;
+import aerolineas.modelo.dto.AerolineaDTO;
+import aerolineas.modelo.dto.AvionDTO;
 import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.Respuesta;
-import aerolineas.modelo.dto.VueloDTO;
 import aerolineas.servicio.ServicioAerolineas;
+import aerolineas.servicio.ServicioAviones;
 import aerolineas.servicio.ServicioVuelos;
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -33,18 +37,31 @@ public class Controlador {
 	@Autowired
 	private ServicioVuelos servicioVuelos;
 
-	/*@Autowired
-	private ServicioAviones servicioAviones;*/
-	
+	@Autowired
+	private ServicioAviones servicioAviones;
 
 	@GetMapping(value = "/{aerolinea}/services/info", produces = "application/json")
-	public ResponseEntity<InfoAerolinea> getInfoAerolinea(@PathVariable String aerolinea) {
+	public ResponseEntity<AerolineaDTO> getInfoAerolinea(@PathVariable String aerolinea) {
 
-		InfoAerolinea info = servicioAerolineas.getInfoAerolinea(aerolinea);
+		AerolineaDTO aerolineaDTO = new AerolineaDTO();
+		try {
+			aerolineaDTO = servicioAerolineas.getInfoAerolinea(aerolinea);
 
-		return new ResponseEntity<>(info, HttpStatus.OK);
+		} catch (AerolineaNotFoundException e) {
+			return new ResponseEntity<>(aerolineaDTO, HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<>(aerolineaDTO, HttpStatus.OK);
 	}
-	
+
+	@PutMapping(value = "/{aerolinea}/services/avion", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<AvionDTO> createAvion(@PathVariable String aerolinea, @RequestBody AvionDAO avionDAO) {
+
+		AvionDTO avionDTO = servicioAviones.create(avionDAO);
+
+		return new ResponseEntity<>(avionDTO, HttpStatus.OK);
+	}
+
 	@GetMapping(value = "/{aerolinea}/services/vuelo", produces = "application/json")
 	public ResponseEntity<Set<Vuelo>> getVuelosPendientes(@PathVariable String aerolinea) {
 
@@ -52,15 +69,15 @@ public class Controlador {
 
 		return new ResponseEntity<>(vuelos, HttpStatus.OK);
 	}
-	
-	@PostMapping(value = "/{aerolinea}/services/vuelo", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Vuelo> addVueloPendientes(@PathVariable String aerolinea, @RequestBody VueloDTO vueloDTO) {
 
-		Vuelo vuelo = servicioVuelos.createVueloPendiente(vueloDTO);
+	@PostMapping(value = "/{aerolinea}/services/vuelo", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Vuelo> addVueloPendientes(@PathVariable String aerolinea, @RequestBody VueloDAO vueloDAO) {
+
+		Vuelo vuelo = servicioVuelos.createVueloPendiente(vueloDAO);
 
 		return new ResponseEntity<>(vuelo, HttpStatus.NO_CONTENT);
 	}
-	
+
 	@GetMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
 	public ResponseEntity<Vuelo> getVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
@@ -68,15 +85,16 @@ public class Controlador {
 
 		return new ResponseEntity<>(vuelo, HttpStatus.OK);
 	}
-	
-	@PutMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Vuelo> editVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo, @RequestBody VueloDTO vueloDTO) {
 
-		Vuelo vuelo = servicioVuelos.modifyVuelo(idVuelo, vueloDTO);
+	@PutMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Vuelo> editVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo,
+			@RequestBody VueloDAO vueloDAO) {
+
+		Vuelo vuelo = servicioVuelos.modifyVuelo(idVuelo, vueloDAO);
 
 		return new ResponseEntity<>(vuelo, HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
 	public ResponseEntity<Respuesta> deleteVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
@@ -84,7 +102,7 @@ public class Controlador {
 
 		return new ResponseEntity<>(Respuesta.noErrorResponse(), HttpStatus.NO_CONTENT);
 	}
-	
+
 	@GetMapping(value = "/{aerolinea}/services/salida", produces = "application/json")
 	public ResponseEntity<Set<Vuelo>> getVuelosSalida(@PathVariable String aerolinea) {
 
@@ -92,7 +110,7 @@ public class Controlador {
 
 		return new ResponseEntity<>(vuelos, HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/{aerolinea}/services/salida/{idVuelo}", produces = "application/json")
 	public ResponseEntity<InfoSalida> getHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
@@ -100,7 +118,7 @@ public class Controlador {
 
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
-	
+
 	@PutMapping(value = "/{aerolinea}/services/salida/{idVuelo}/despegue", produces = "application/json")
 	public ResponseEntity<Vuelo> modifyHaSalidoVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
@@ -108,7 +126,5 @@ public class Controlador {
 
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
-	
-	
 
 }

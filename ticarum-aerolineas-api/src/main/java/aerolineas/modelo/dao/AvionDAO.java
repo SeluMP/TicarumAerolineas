@@ -1,4 +1,4 @@
-package aerolineas.modelo.dto;
+package aerolineas.modelo.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InfoAerolinea {
-	String nombre;
-	Long id;
-	int numAvionesFlota;
+public class AvionDAO {
+	private Long aerolineaID;
+	private String modelo;
+	private int capacidad;
 }

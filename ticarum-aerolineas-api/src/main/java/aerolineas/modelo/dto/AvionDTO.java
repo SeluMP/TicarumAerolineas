@@ -1,15 +1,29 @@
 package aerolineas.modelo.dto;
 
+import aerolineas.modelo.Avion;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AvionDTO {
-	private Long aerolineaID;
-	private Long avionID;
+	private Long id;
 	private String modelo;
 	private int capacidad;
+	private Long aerolineaId;
+	
+	public AvionDTO createDTOfromAvion(Avion avion) {
+		AvionDTO avionDTO = new AvionDTO();
+		avionDTO.setId(avion.getId());
+		avionDTO.setModelo(avion.getModelo());
+		avionDTO.setCapacidad(avion.getCapacidad());
+		avionDTO.setAerolineaId(avion.getAerolinea().getId());
+		
+		return avionDTO;
+	}
+
 }

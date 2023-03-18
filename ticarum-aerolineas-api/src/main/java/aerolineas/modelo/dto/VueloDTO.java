@@ -1,14 +1,34 @@
 package aerolineas.modelo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Date;
 
-@Data
+import aerolineas.modelo.Vuelo;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class VueloDTO {
-	private Long avionID;
-	private Long aerolineaID;
+	private Long id;
 	private String descripcion;
+	private Date fechaPendienteDeSalida;
+	private Date fechaSalida;
+	private Long avionId;
+	private Long aerolineaId;
+
+	public VueloDTO createDTOfromVuelo(Vuelo vuelo) {
+		VueloDTO vueloDTO = new VueloDTO();
+		vueloDTO.setId(vuelo.getId());
+		vueloDTO.setDescripcion(vuelo.getDescripcion());
+		vueloDTO.setFechaPendienteDeSalida(vuelo.getPendiente());
+		vueloDTO.setFechaSalida(vuelo.getSalida());
+		vueloDTO.setAvionId(vuelo.getAvion().getId());
+		vueloDTO.setAerolineaId(vuelo.getAerolinea().getId());
+
+		return vueloDTO;
+	}
 }
