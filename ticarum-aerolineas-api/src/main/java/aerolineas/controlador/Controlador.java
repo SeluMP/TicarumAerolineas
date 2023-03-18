@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import aerolineas.exception.VueloNotFoundException;
 import aerolineas.modelo.Vuelo;
-import aerolineas.modelo.dto.Info;
+import aerolineas.modelo.dto.InfoAerolinea;
 import aerolineas.modelo.dto.InfoSalida;
 import aerolineas.modelo.dto.Respuesta;
 import aerolineas.modelo.dto.VueloDTO;
@@ -38,9 +38,9 @@ public class Controlador {
 	
 
 	@GetMapping(value = "/{aerolinea}/services/info", produces = "application/json")
-	public ResponseEntity<Info> getInfoAerolinea(@PathVariable String aerolinea) {
+	public ResponseEntity<InfoAerolinea> getInfoAerolinea(@PathVariable String aerolinea) {
 
-		Info info = servicioAerolineas.getInfoAerolinea(aerolinea);
+		InfoAerolinea info = servicioAerolineas.getInfoAerolinea(aerolinea);
 
 		return new ResponseEntity<>(info, HttpStatus.OK);
 	}
@@ -77,8 +77,8 @@ public class Controlador {
 		return new ResponseEntity<>(vuelo, HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Respuesta> deleteVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo, @RequestBody VueloDTO vueloDTO) {
+	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
+	public ResponseEntity<Respuesta> deleteVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
 		servicioVuelos.deleteVuelo(idVuelo, aerolinea);
 

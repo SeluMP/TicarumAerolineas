@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Info {
+public class InfoAerolinea {
 	String nombre;
 	Long id;
 	int numAvionesFlota;

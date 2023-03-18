@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import aerolineas.exception.AerolineaNotFoundException;
 import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.dto.AerolineaDTO;
-import aerolineas.modelo.dto.Info;
+import aerolineas.modelo.dto.InfoAerolinea;
 import aerolineas.repositorio.RepositorioAerolinea;
 import aerolineas.repositorio.RepositorioAvion;
 
@@ -39,12 +39,12 @@ public class ServicioAerolineas implements IServiceAirlines {
 	}
 
 	@Override
-	public Info getInfoAerolinea(String nombre) {
+	public InfoAerolinea getInfoAerolinea(String nombre) {
 		Aerolinea aerolinea = repositorioAerolinea.findByName(nombre);
 		if (aerolinea == null)
 			throw new AerolineaNotFoundException("Aerolinea no encontrada - información no disponible");
 
-		Info info = new Info();
+		InfoAerolinea info = new InfoAerolinea();
 		info.setId(aerolinea.getId());
 		info.setNombre(aerolinea.getNombre());
 		info.setNumAvionesFlota((int) repositorioAvion.findAvionesPorAerolinea(aerolinea.getId()));

@@ -77,8 +77,7 @@ public class ServicioVuelos implements IServiceFlights {
 		
 		aerolinea.addVuelo(vuelo);
 		avion.addVuelo(vuelo);
-		
-		//TODO
+				
 		repositorioAerolinea.save(aerolinea);
 		repositorioAvion.save(avion);
 		
@@ -99,10 +98,11 @@ public class ServicioVuelos implements IServiceFlights {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
 		InfoSalida respuesta = new InfoSalida();
 		
-		if(vuelo.getSalida().equals(null)) {
-			respuesta.setHaSalido(true);
-		} else {
+		Date date = new Date();
+		if(vuelo.getSalida().after(date)) {
 			respuesta.setHaSalido(false);
+		} else {
+			respuesta.setHaSalido(true);
 		}
 		respuesta.setHoraSalida(vuelo.getSalida());
 		return respuesta;

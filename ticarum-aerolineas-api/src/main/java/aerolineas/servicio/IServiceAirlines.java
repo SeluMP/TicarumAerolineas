@@ -4,11 +4,11 @@ import java.util.Optional;
 
 import aerolineas.modelo.Aerolinea;
 import aerolineas.modelo.dto.AerolineaDTO;
-import aerolineas.modelo.dto.Info;
+import aerolineas.modelo.dto.InfoAerolinea;
 
 public interface IServiceAirlines {
 	
-	Info getInfoAerolinea(String nombre);
+	InfoAerolinea getInfoAerolinea(String nombre);
 	
 	Aerolinea crear(AerolineaDTO aerolineaDTO);
 	

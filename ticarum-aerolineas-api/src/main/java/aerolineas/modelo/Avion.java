@@ -3,6 +3,8 @@ package aerolineas.modelo;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,11 +16,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Avion {
@@ -31,9 +35,11 @@ public class Avion {
 	@Column(nullable = false)
 	private int capacidad;
 	@OneToMany(mappedBy="avion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private Set<Vuelo> vuelos;
 	@ManyToOne
 	@JoinColumn(name="fk_aerolinea_id", nullable=false)
+	@JsonIgnore
 	private Aerolinea aerolinea;
 	
 	public Avion(String modelo, int capacidad) {
