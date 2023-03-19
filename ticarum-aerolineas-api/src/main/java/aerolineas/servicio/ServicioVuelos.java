@@ -102,6 +102,8 @@ public class ServicioVuelos implements IServicioVuelos {
 	public void deleteVuelo(Long id, String nombreAerolinea) {
 		Vuelo vuelo = repositorioVuelo.findById(id).orElseThrow(() -> new VueloNotFoundException(id));
 		Aerolinea aerolinea = repositorioAerolinea.findByName(nombreAerolinea);
+		if (aerolinea == null)
+			throw new AerolineaNotFoundException();
 		aerolinea.removeVuelo(vuelo);
 
 		repositorioAerolinea.save(aerolinea);
@@ -113,7 +115,9 @@ public class ServicioVuelos implements IServicioVuelos {
 		InfoSalida respuesta = new InfoSalida();
 
 		Date date = new Date();
-		if (vuelo.getSalida().after(date)) {
+		if (null == vuelo.getSalida()) {
+			respuesta.setHaSalido(false);
+		} else if (vuelo.getSalida().after(date)) {
 			respuesta.setHaSalido(false);
 		} else {
 			respuesta.setHaSalido(true);

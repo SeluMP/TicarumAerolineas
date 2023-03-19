@@ -137,7 +137,13 @@ public class Controlador {
 	@DeleteMapping(value = "/{aerolinea}/services/vuelo/{idVuelo}", produces = "application/json")
 	public ResponseEntity<Respuesta> deleteVuelo(@PathVariable String aerolinea, @PathVariable Long idVuelo) {
 
-		servicioVuelos.deleteVuelo(idVuelo, aerolinea);
+		try {
+			servicioVuelos.deleteVuelo(idVuelo, aerolinea);
+		} catch (Exception e) {
+			return new ResponseEntity<>(
+					Respuesta.errorResonse(Respuesta.NOT_FOUND, "Entidad Avion o Aerolinea no encontrada/s."),
+					HttpStatus.NOT_FOUND);
+		}
 
 		return new ResponseEntity<>(Respuesta.errorResonse(Respuesta.NO_CONTENT, ""), HttpStatus.NO_CONTENT);
 	}
